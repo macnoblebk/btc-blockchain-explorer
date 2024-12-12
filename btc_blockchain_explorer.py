@@ -358,6 +358,23 @@ def print_transaction_inputs(tx_in_list):
         print('{}{:32} sequence number'.format(prefix, seq.hex()))
 
 
+def print_transaction_outputs(tx_out_list):
+    prefix = PREFIX * 2
+    for i, tx_out in enumerate(tx_out_list, start=1):
+        print('\n{} Transaction {}:'.format(prefix, i))
+        print(prefix + '*' * 32)
+        value, pk_script_bytes, pk_script = tx_out[0]
+        pk_script_bytes_count = tx_out[1]
+        satoshis = unmarshal_uint(value)
+        btc = sat_to_btc(satoshis)
+        print('{}{:32} value: {} satoshis = {} BTC'.format(prefix, value.hex(), satoshis, btc))
+        print('{}{:32} public key script length: {}\n{}-'
+              .format(prefix, pk_script_bytes.hex(), pk_script_bytes_count, prefix))
+        for j in range(0, pk_script_bytes_count * 2, 32):
+            print('{}{:32}{}'.format(prefix, pk_script.hex()[j:j + 32],
+                                     ' public key script\n{}-'.format(prefix)
+                                     if j + 32 > pk_script_bytes_count * 2 else ''))
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
