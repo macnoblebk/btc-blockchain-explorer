@@ -66,13 +66,19 @@ def version_message():
                      nonce + user_agent_bytes + start_height + relay])
 
 
-
 def getdata_message(tx_type, header_hash):
     count = compactsize_t(1)
     entry_type = uint32_t(tx_type)
     entry_hash = bytes.fromhex(header_hash.hex())
     return count + entry_type + entry_hash
 
+
+def getblocks_message(header_hash):
+    version = uint32_t(VERSION)
+    hash_count = compactsize_t(1)
+    block_header_hash = bytes.fromhex(header_hash.hex())
+    end_hash = b'\0' * 32
+    return b''.join([version + hash_count + block_header_hash + end_hash])
 
 def compactsize_t(n):
     if n < 252:
