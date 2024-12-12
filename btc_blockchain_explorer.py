@@ -28,6 +28,15 @@ def construct_message(command, payload):
     return message_header(command, payload) + payload
 
 
+def message_header(command, payload):
+    magic = START_STRING
+    command_name = command.encode('ascii')
+    while len(command_name) < COMMAND_SIZE:
+        command_name += b'\0'
+    payload_size = uint32_t(len(payload))
+    csum = checksum(payload)
+    return b''.join([magic, command_name, payload_size, csum])
+
 
 
 def compactsize_t(n):
