@@ -344,6 +344,20 @@ def print_transaction(txn_bytes):
         print('EXTRA: {}'.format(txn_bytes[i + 4:].hex()))
 
 
+def print_transaction_inputs(tx_in_list):
+    prefix = PREFIX * 2
+    for i, tx_in in enumerate(tx_in_list, start=1):
+        print('\n{} Transaction {}{}:'.format(prefix, i, ' (Coinbase)' if i == 1 else ''))
+        print(prefix + '*' * 32)
+        hash, index, script_bytes, sig_script, seq = tx_in[0]
+        script_bytes_count = tx_in[1]
+        print('{}{:32}\n{}{:32} hash\n{}-'.format(prefix, hash.hex()[:32], prefix, hash.hex()[32:], prefix))
+        print('{}{:32} index: {}'.format(prefix, index.hex(), unmarshal_uint(index)))
+        print('{}{:32} script bytes: {}'.format(prefix, script_bytes.hex(), script_bytes_count))
+        print('{}{:32} {} script'.format(prefix, sig_script.hex(), 'coinbase ' if i == 1 else ''))
+        print('{}{:32} sequence number'.format(prefix, seq.hex()))
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
