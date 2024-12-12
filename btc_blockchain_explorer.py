@@ -42,6 +42,10 @@ def checksum(payload: bytes):
     return hash(payload)[:4]
 
 
+def hash(payload: bytes):
+    return hashlib.sha256(hashlib.sha256(payload).digest()).digest()
+
+
 def version_message():
     version = int32_t(VERSION)
     services = uint64_t(0)
@@ -61,10 +65,13 @@ def version_message():
                      addr_recv_port + addr_trans_services + addr_trans_ip_address + addr_trans_port +
                      nonce + user_agent_bytes + start_height + relay])
 
-def hash(payload: bytes):
-    return hashlib.sha256(hashlib.sha256(payload).digest()).digest()
 
 
+def getdata_message(tx_type, header_hash):
+    count = compactsize_t(1)
+    entry_type = uint32_t(tx_type)
+    entry_hash = bytes.fromhex(header_hash.hex())
+    return count + entry_type + entry_hash
 
 
 def compactsize_t(n):
