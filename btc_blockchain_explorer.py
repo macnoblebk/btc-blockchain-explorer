@@ -250,6 +250,20 @@ def print_feefilter_message(feerate):
     print('{}{:32} count: {}'.format(prefix, feerate.hex(), unmarshal_uint(feerate)))
 
 
+def print_addr_message(payload):
+    ip_count_bytes, ip_addr_count = unmarshal_compactsize(payload)
+    i = len(ip_count_bytes)
+    epoch_time, services, ip_addr, port = (payload[i: i + 4], payload[i+4: i+12],
+                                           payload[i + 12:i + 28], payload[i + 28:])
+    prefix = PREFIX * 2
+    print('{}{:32} count: {}'.format(prefix, ip_count_bytes.hex(), ip_addr_count))
+    time_str = strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(unmarshal_int(epoch_time)))
+    print('{}{:32} epoch time: {}'.format(prefix, epoch_time.hex(), time_str))
+    print('{}{:32} services: {}'.format(prefix, services.hex(), unmarshal_uint(services)))
+    print('{}{:32} host: {}'.format(prefix, ip_addr.hex(), ipv6_to_ipv4(ip_addr)))
+    print('{}{:32} port: {}'.format(prefix, port.hex(), unmarshal_uint(port)))
+
+
 
 def print_version_msg(b):
     """
