@@ -205,6 +205,24 @@ def print_message(msg, text=None, height=None):
     return command
 
 
+def print_inv_message(payload, height):
+    count_bytes, count = unmarshal_compactsize(payload)
+    i = len(count_bytes)
+    inventory = []
+    for _ in range(count):
+        inv_entry = payload[i: i+4], payload[i+4: i+36]
+        inventory.append(inv_entry)
+        i += 36
+
+    prefix = PREFIX * 2
+    print('{}{:32} count: {}'.format(prefix, count_bytes.hex(), count))
+    for i, (tx_type, tx_hash) in enumerate(inventory, start=height if height else 1):
+        print('\n{}{:32} type: {}\n{}-'
+              .format(prefix, tx_type.hex(), unmarshal_uint(tx_type), prefix))
+        block_hash = swap_endian(tx_hash).hex()
+        print('{}{:32}\n{}{:32} block {} hash'.format(prefix, block_hash[:32], prefix, block_hash[32:], i))
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
