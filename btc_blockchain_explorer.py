@@ -245,6 +245,12 @@ def print_getblocks_message(payload):
               .format(prefix, stop_hash_hex[:32], prefix, stop_hash_hex[32:], unmarshal_uint(stop_hash)))
 
 
+def print_feefilter_message(feerate):
+    prefix = PREFIX * 2
+    print('{}{:32} count: {}'.format(prefix, feerate.hex(), unmarshal_uint(feerate)))
+
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
