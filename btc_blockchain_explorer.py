@@ -428,6 +428,13 @@ def get_last_block_hash(inv_bytes):
     return inv_bytes[len(inv_bytes) - 32:]
 
 
+def update_current_height(block_list, current_height):
+    header_size = 36
+    offset = 27
+    new_blocks = (len(block_list[-1]) - offset) // header_size
+    return current_height + new_blocks
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
