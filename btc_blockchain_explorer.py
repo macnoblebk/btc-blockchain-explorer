@@ -276,6 +276,31 @@ def print_sendcmpct_message(payload):
     print('{}{:32} version: {}'.format(prefix, version.hex(), unmarshal_uint(version)))
 
 
+def print_block_message(payload):
+    version, previous_block, merkle_root, epoch_time, bits, nonce = (payload[:4], payload[4:36],
+                                                                     payload[36:68], payload[68:72],
+                                                                     payload[72:76], payload[76:80])
+
+    txn_count_bytes,  txn_count = unmarshal_compactsize(payload[80:])
+    txns = payload[80 + len(txn_count_bytes):]
+
+    prefix = PREFIX * 2
+    print('{}{:32} version: {}\n{}-'
+          .format(prefix, version.hex(), unmarshal_int(version), prefix))
+    previous_hash = swap_endian(previous_block)
+    print('{}{:32}\n{}{:32} previous block hash\n{}-'
+          .format(prefix, previous_hash.hex()[:32], prefix, previous_hash.hex()[32:], prefix))
+    merkle_hash = swap_endian(merkle_root)
+    print('{}{:32}\n{}{:32} merkle root hash\n{}-'
+          .format(prefix, merkle_hash.hex()[:32], prefix, merkle_hash.hex()[32:], prefix))
+    time_str = strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime(unmarshal_int(epoch_time)))
+    print('{}{:32} epoch time: {}'.format(prefix, epoch_time.hex(), time_str))
+    print('{}{:32} bits: {}'.format(prefix, bits.hex(), unmarshal_uint(bits)))
+    print('{}{:32} nonce: {}'.format(prefix, nonce.hex(), unmarshal_uint(nonce)))
+    print('{}{:32} transaction count: {}'.format(prefix, txn_count_bytes.hex(), txn_count))
+    print_transaction(txns)
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
