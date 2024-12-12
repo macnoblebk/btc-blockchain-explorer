@@ -414,6 +414,16 @@ def parse_tx_in(tx_in_bytes):
     return [hash, index, script_bytes, sig_script, sequence], script_bytes_count
 
 
+def split_message(peer_msg_bytes):
+    msg_list = []
+    while peer_msg_bytes:
+        payload_size = unmarshal_uint(peer_msg_bytes[16:20])
+        msg_size = HDR_SZ + payload_size
+        msg_list.append(peer_msg_bytes[:msg_size])
+        peer_msg_bytes = peer_msg_bytes[msg_size:]
+    return msg_list
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
