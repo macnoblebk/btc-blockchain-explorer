@@ -462,6 +462,15 @@ def exchange_messages(bytes_to_send, expected_bytes=None, height=None, wait=Fals
         return peer_msg_list
 
 
+def send_getblocks_message(input_hash, current_height):
+    getblocks_bytes = construct_message('getblocks', getblocks_message(input_hash))
+    peer_inv = exchange_messages(getblocks_bytes, expected_bytes=18027, height=current_height + 1)
+    peer_inv_bytes = b''.join(peer_inv)
+    last_500_headers = [peer_inv_bytes[i:i + 32] for i in range(31, len(peer_inv_bytes), 36)]
+    current_height = update_current_height(peer_inv, current_height)
+    return last_500_headers, current_height
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
