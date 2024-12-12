@@ -395,6 +395,14 @@ def parse_coinbase(cb_bytes, version):
     else:
         return [hash_null, index, script_bytes, cb_script, sequence], script_bytes_count
 
+
+def parse_tx_out(tx_out_bytes):
+    value = tx_out_bytes[:8]
+    pk_script_bytes, pk_script_bytes_count = unmarshal_compactsize(tx_out_bytes[8:])
+    i = 8 + len(pk_script_bytes)
+    pk_script = tx_out_bytes[i:i + pk_script_bytes_count]
+    return [value, pk_script_bytes, pk_script], pk_script_bytes_count
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
