@@ -475,6 +475,57 @@ def peer_height_from_version(vsn_bytes):
     return unmarshal_uint(vsn_bytes[-5:-1])
 
 
+def change_block_value(block, block_number, new_amount):
+    txn_count_bytes = unmarshal_compactsize(block[104:])[0]
+    index = 104 + len(txn_count_bytes)
+    version = block[index:index + 4]
+    index += 4
+    tx_in_count_bytes = unmarshal_compactsize(block[index:])[0]
+    index += len(tx_in_count_bytes)
+    tx_in = parse_coinbase(block[index:], version)[0]
+    index += len(b''.join(tx_in))
+    txn_out_count_bytes = unmarshal_compactsize(block[index:])[0]
+    index += len(txn_out_count_bytes)
+
+    # Print old value
+    old_value_bytes = block[index:index + 8]
+    old_value = unmarshal_uint(old_value_bytes)
+    print('Block {}: change value from {} BTC to {} BTC'
+          .format(block_number, sat_to_btc(old_value), sat_to_btc(new_amount)))
+    print('-' * 41)
+    print('{:<24}'.format('old value:') + '{} BTC = {} satoshis'.format(sat_to_btc(old_value), old_value))
+
+    # Verify old merkle hash
+    old_merkle = swap_endian(block[60:92])
+    calc_old_merkle = swap_endian(hash(block[104 + len(tx_in_count_bytes):]))
+    print('{:<24}'.format('old merkle hash:') + old_merkle.hex())
+    print('{:<24}'.format('verify old merkle hash:') + 'hash(txn) = {}'.format(calc_old_merkle.hex()))
+    old_hash = swap_endian(hash(block[HDR_SZ:HDR_SZ + 80]))
+    print('{:<24}'.format('old block hash:') + old_hash.hex())
+
+    print('*' * 16)
+
+    # Change the value bytes in the block
+    block = block.replace(block[index:index + 8], uint64_t(new_amount))
+    new_value_bytes = block[index:index + 8]
+    new_value = unmarshal_uint(new_value_bytes)
+    print('{:<24}'.format('new value:') + '{} BTC = {} satoshis'.format(sat_to_btc(new_value), new_value))
+
+    # Calculate and print new merkle root
+    calc_new_merkle = hash(block[104 + len(tx_in_count_bytes):])
+    block = block.replace(block[60:92], calc_new_merkle)
+    new_merkle = swap_endian(block[60:92])
+    calc_new_merkle = swap_endian(calc_new_merkle)
+    print('{:<24}'.format('new merkle:') + new_merkle.hex())
+    print('{:<24}'.format('verify new merkle:') + 'hash(txn) = {}'.format(calc_new_merkle.hex()))
+
+    # Calculate and display new block hash
+    new_hash = swap_endian(hash(block[HDR_SZ:HDR_SZ + 80]))
+    print('{:<24}'.format('new block hash:') + new_hash.hex())
+    print('-' * 32)
+    return block
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
