@@ -38,6 +38,9 @@ def message_header(command, payload):
     return b''.join([magic, command_name, payload_size, csum])
 
 
+def checksum(payload: bytes):
+    return hash(payload)[:4]
+
 
 def compactsize_t(n):
     if n < 252:
