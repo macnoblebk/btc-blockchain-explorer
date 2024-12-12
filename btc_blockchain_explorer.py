@@ -526,6 +526,34 @@ def change_block_value(block, block_number, new_amount):
     return block
 
 
+def manipulate_transaction(my_block, block_number, last_500_blocks, new_value):
+    print('\nManipulating existing transaction')
+    print('*' * 64 + '\n')
+    btcs = new_value
+    satoshis = btc_to_sat(btcs)
+
+    # Change block value, merkle hash, and update checksum
+    modified_block = change_block_value(my_block, block_number, satoshis)
+    modified_block = modified_block.replace(modified_block[20:HDR_SZ], checksum(modified_block[HDR_SZ:]))
+
+    # Print fields of the new modified block
+    end = HDR_SZ + 80
+    modified_block_hash = swap_endian(hash(modified_block[HDR_SZ:end])).hex()
+    print_message(modified_block, '*********** Testing (value has changed) *********** ')
+
+    # Get the next block and verify it's prev block hash doesn't match the new hash of the altered block
+    print('\nBlock {} data: '.format(block_number + 1))
+    next_block_hash = last_500_blocks[block_number % 500]
+    getdata_msg = construct_message('getdata', getdata_message(2, next_block_hash))
+    next_block = exchange_messages(getdata_msg, wait=True)
+    next_block = b''.join(next_block)
+    prev_block_hash = swap_endian(next_block[28:60]).hex()
+    print('\nBlock {} previous block hash : {}'.format(block_number + 1, prev_block_hash))
+    print('Block {} modified block hash : {}'.format(block_number, modified_block_hash))
+    print('\t{} != {}'.format(prev_block_hash, modified_block_hash))
+    print('Modified block is accepted' if prev_block_hash == modified_block_hash else 'Modified block rejected!')
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
