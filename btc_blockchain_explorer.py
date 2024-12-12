@@ -84,6 +84,10 @@ def getblocks_message(header_hash):
 def ping_message():
     return uint64_t(random.getrandbits(64))
 
+
+def sat_to_btc(sat):
+    return sat / SATOSHIS_PER_BTC
+
 def compactsize_t(n):
     if n < 252:
         return uint8_t(n)
