@@ -403,6 +403,17 @@ def parse_tx_out(tx_out_bytes):
     pk_script = tx_out_bytes[i:i + pk_script_bytes_count]
     return [value, pk_script_bytes, pk_script], pk_script_bytes_count
 
+
+def parse_tx_in(tx_in_bytes):
+    hash = tx_in_bytes[:32]
+    index = tx_in_bytes[32:36]
+    script_bytes, script_bytes_count = unmarshal_compactsize(tx_in_bytes[36:])
+    i = 36 + len(script_bytes)
+    sig_script = tx_in_bytes[i:i + script_bytes_count]
+    sequence = tx_in_bytes[i + script_bytes_count:]
+    return [hash, index, script_bytes, sig_script, sequence], script_bytes_count
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
