@@ -223,6 +223,28 @@ def print_inv_message(payload, height):
         print('{}{:32}\n{}{:32} block {} hash'.format(prefix, block_hash[:32], prefix, block_hash[32:], i))
 
 
+def print_getblocks_message(payload):
+    version = payload[:4]
+    hash_count_bytes, hash_count = unmarshal_compactsize(payload[4:])
+    i = 4 + len(hash_count_bytes)
+    block_header_hashes = []
+    for _ in range(hash_count):
+        block_header_hashes.append(payload[i: i+32])
+        i += 32
+    stop_hash = payload[i:]
+
+    prefix = PREFIX * 2
+    print('{}{:32} version: {}'.format(prefix, version.hex(), unmarshal_uint(version)))
+    print('{}{:32} hash count: {}'.format(prefix, hash_count_bytes.hex(), hash_count))
+    for hash in block_header_hashes:
+        hash_hex = swap_endian(hash).hex()
+        print('\n{}{:32}\n{}{:32} block header hash # {}: {}'
+              .format(prefix, hash_hex[:32], prefix, hash_hex[32:], 1, unmarshal_uint(hash)))
+        stop_hash_hex = stop_hash.hex()
+        print('\n{}{:32}\n{}{:32} stop hash: {}'
+              .format(prefix, stop_hash_hex[:32], prefix, stop_hash_hex[32:], unmarshal_uint(stop_hash)))
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
