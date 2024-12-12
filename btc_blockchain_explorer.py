@@ -264,6 +264,9 @@ def print_addr_message(payload):
     print('{}{:32} port: {}'.format(prefix, port.hex(), unmarshal_uint(port)))
 
 
+def print_ping_pong_message(nonce):
+    prefix = PREFIX * 2
+    print('{}{:32} nonce: {}'.format(prefix, nonce.hex(), unmarshal_uint(nonce)))
 
 def print_version_msg(b):
     """
