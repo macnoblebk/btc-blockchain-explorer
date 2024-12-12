@@ -158,6 +158,12 @@ def unmarshal_uint(b, byteorder='little'):
     return int.from_bytes(b, byteorder=byteorder, signed=False)
 
 
+def swap_endian(b: bytes):
+    swapped = bytearray.fromhex(b.hex())
+    swapped.reverse()
+    return swapped
+
+
 def print_message(msg, text=None):
     """
     Report the contents of the given bitcoin message
