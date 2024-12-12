@@ -41,6 +41,9 @@ def message_header(command, payload):
 def checksum(payload: bytes):
     return hash(payload)[:4]
 
+def hash(payload: bytes):
+    return hashlib.sha256(hashlib.sha256(payload).digest()).digest()
+
 
 def compactsize_t(n):
     if n < 252:
