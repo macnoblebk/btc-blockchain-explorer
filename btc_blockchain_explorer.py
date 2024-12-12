@@ -301,6 +301,49 @@ def print_block_message(payload):
     print_transaction(txns)
 
 
+def print_transaction(txn_bytes):
+    version = txn_bytes[:4]
+    tx_in_count_bytes, tx_in_count = unmarshal_compactsize(txn_bytes[4:])
+    i = 4 + len(tx_in_count_bytes)
+
+    cb_txn, cb_script_bytes_count = parse_coinbase(txn_bytes[i:], version)
+    tx_in_list = [cb_txn, cb_script_bytes_count]
+    i += len(b''.join(cb_txn))
+
+    for _ in range(1, tx_in_count):
+        tx_in, script_bytes_count = parse_tx_in(txn_bytes[i:])
+        tx_in_list.append((tx_in, script_bytes_count))
+        i += len(b''.join(tx_in))
+
+    tx_out_count_bytes, tx_out_count = unmarshal_compactsize(txn_bytes[i:])
+    tx_out_list = []
+    i += len(tx_out_count_bytes)
+
+    for _ in range(tx_out_count):
+        tx_out, pk_script_bytes_count = parse_tx_out(txn_bytes[i:])
+        tx_out_list.append((tx_out, pk_script_bytes_count))
+        i += len(b''.join(tx_out))
+
+    lock_time = txn_bytes[i: i+4]
+
+    prefix = PREFIX * 2
+    print('{}{:32} version: {}'.format(prefix, version.hex(), unmarshal_uint(version)))
+
+    print('\n{}Transaction Inputs:'.format(prefix))
+    print(prefix + '-' * 32)
+    print('{}{:32} input txn count: {}'.format(prefix, tx_in_count_bytes.hex(), tx_in_count))
+    print_transaction_inputs(tx_in_list)
+
+    print('\n{}Transaction Outputs:'.format(prefix))
+    print(prefix + '-' * 32)
+    print('{}{:32} output txn count: {}'.format(prefix, tx_out_count_bytes.hex(), tx_out_count))
+    print_transaction_outputs(tx_out_list)
+
+    print('{}{:32} lock time: {}'.format(prefix, lock_time.hex(), unmarshal_uint(lock_time)))
+    if txn_bytes[i + 4:]:
+        print('EXTRA: {}'.format(txn_bytes[i + 4:].hex()))
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
