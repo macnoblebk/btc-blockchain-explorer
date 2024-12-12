@@ -375,6 +375,26 @@ def print_transaction_outputs(tx_out_list):
                                      ' public key script\n{}-'.format(prefix)
                                      if j + 32 > pk_script_bytes_count * 2 else ''))
 
+
+def parse_coinbase(cb_bytes, version):
+    hash_null = cb_bytes[:32]
+    index = cb_bytes[32:36]
+    script_bytes, script_bytes_count = unmarshal_compactsize(cb_bytes[36:])
+    i = 36 + len(script_bytes)
+
+    height = None
+    if unmarshal_uint(version) > 1:
+        height = cb_bytes[i:i+4]
+        i += 4
+
+    cb_script = cb_bytes[i:i + script_bytes_count]
+    sequence = cb_bytes[i + script_bytes_count: i + script_bytes_count + 4]
+
+    if height:
+        return [hash_null, index, script_bytes, height, cb_script, sequence], script_bytes_count
+    else:
+        return [hash_null, index, script_bytes, cb_script, sequence], script_bytes_count
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
