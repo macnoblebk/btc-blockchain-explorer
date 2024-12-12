@@ -424,6 +424,10 @@ def split_message(peer_msg_bytes):
     return msg_list
 
 
+def get_last_block_hash(inv_bytes):
+    return inv_bytes[len(inv_bytes) - 32:]
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
