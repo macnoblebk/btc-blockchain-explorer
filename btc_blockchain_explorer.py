@@ -435,6 +435,33 @@ def update_current_height(block_list, current_height):
     return current_height + new_blocks
 
 
+def exchange_messages(bytes_to_send, expected_bytes=None, height=None, wait=False):
+    print_message(bytes_to_send, 'send', height=height)
+    BTC_SOCKET.settimeout(0.5)
+    bytes_received = b''
+
+    try:
+        BTC_SOCKET.sendall(bytes_to_send)
+
+        if expected_bytes:
+            while len(bytes_received) < expected_bytes:
+                bytes_received += BTC_SOCKET.recv(BUFFER_SIZE)
+        elif wait:
+            while True:
+                bytes_received += BTC_SOCKET.recv(BUFFER_SIZE)
+
+    except Exception as e:
+        print('\nNo bytes left to receive from {}: {}'.format(BTC_PEER_ADDRESS, str(e)))
+
+    finally:
+        print('\n****** Received {} bytes from BTC node {} ******'
+              .format(len(bytes_received), BTC_PEER_ADDRESS))
+        peer_msg_list = split_message(bytes_received)
+        for msg in peer_msg_list:
+            print_message(msg, 'receive', height)
+        return peer_msg_list
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
