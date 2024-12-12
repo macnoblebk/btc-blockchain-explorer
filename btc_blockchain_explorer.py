@@ -1,3 +1,34 @@
+import hashlib
+import random
+import time
+import socket
+import sys
+from time import strftime, gmtime
+
+
+BUFFER_SIZE = 4096
+BTC_HOST = '3.65.33.103'
+BTC_PORT = 8333
+BTC_PEER_ADDRESS = (BTC_HOST, BTC_PORT)
+BTC_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+MAX_BLOCKS = 500
+GENESIS_BLOCK = bytes.fromhex('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f')
+VERSION = 70015
+START_STRING = bytearray.fromhex('f9beb4d9')
+HDR_SZ = 24
+BLOCK_NUMBER = 1234567 % 10_000
+COMMAND_SIZE = 12
+EMPTY_STRING = ''.encode()
+LOCALHOST = '127.0.0.1'
+PREFIX = '  '
+SATOSHIS_PER_BTC = 100_000_000
+
+
+
+
+
+
+
 def compactsize_t(n):
     if n < 252:
         return uint8_t(n)
