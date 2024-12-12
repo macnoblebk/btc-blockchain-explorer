@@ -41,8 +41,30 @@ def message_header(command, payload):
 def checksum(payload: bytes):
     return hash(payload)[:4]
 
+
+def version_message():
+    version = int32_t(VERSION)
+    services = uint64_t(0)
+    timestamp = uint64_t(int(time.time()))
+    addr_recv_services = uint64_t(1)
+    addr_recv_ip_address = ipv6_from_ipv4(BTC_HOST)
+    addr_recv_port = uint16_t(BTC_PORT)
+    addr_trans_services = uint64_t(0)
+    addr_trans_ip_address = ipv6_from_ipv4(LOCALHOST)
+    addr_trans_port = uint16_t(BTC_PORT)
+    nonce = uint64_t(0)
+    user_agent_bytes = compactsize_t(0)
+    start_height = uint32_t(0)
+    relay = bool_t(False)
+
+    return b''.join([version + services + timestamp + addr_recv_services + addr_recv_ip_address +
+                     addr_recv_port + addr_trans_services + addr_trans_ip_address + addr_trans_port +
+                     nonce + user_agent_bytes + start_height + relay])
+
 def hash(payload: bytes):
     return hashlib.sha256(hashlib.sha256(payload).digest()).digest()
+
+
 
 
 def compactsize_t(n):
