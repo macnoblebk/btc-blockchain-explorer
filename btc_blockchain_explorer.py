@@ -164,19 +164,44 @@ def swap_endian(b: bytes):
     return swapped
 
 
-def print_message(msg, text=None):
+def print_message(msg, text=None, height=None):
     """
-    Report the contents of the given bitcoin message
-    :param msg: bitcoin message including header
-    :return: message type
+    Prints the details of a Bitcoin message, including its header and payload.
+
+    Args:
+        msg (bytes): The complete Bitcoin protocol message.
+        text (str, optional): A label for the message (e.g., 'send', 'receive').
+        height (int, optional): The block height associated with the message.
+
+    Returns:
+        str: The command name of the message (e.g., 'version', 'ping').
     """
     print('\n{}MESSAGE'.format('' if text is None else (text + ' ')))
     print('({}) {}'.format(len(msg), msg[:60].hex() + ('' if len(msg) < 60 else '...')))
     payload = msg[HDR_SZ:]
     command = print_header(msg[:HDR_SZ], checksum(payload))
-    if command == 'version':
+
+    if payload:
+        header_hash = swap_endian(hash(payload[:80])).hex() if command == 'block' else ''
+        print('{}{} {}'.format(PREFIX, command.upper(), header_hash))
+        print(PREFIX + '-' * 56)
+
+    elif command == 'version':
         print_version_msg(payload)
-    # FIXME print out the payloads of other types of messages, too
+    elif command == 'addr':
+        print_addr_message(payload)
+    elif command == 'feefilter':
+        print_feefilter_message(payload)
+    elif command == 'getblocks':
+        print_getblocks_message(payload)
+    elif command == 'sendcmpct':
+        print_sendcmpct_message(payload)
+    elif command == 'ping' or command == 'pong':
+        print_ping_pong_message(payload)
+    elif command == 'inv' or command == 'getdata' or command == 'notfound':
+        print_inv_message(payload, height)
+    elif command == 'block':
+        print_block_message(payload)
     return command
 
 
