@@ -619,3 +619,55 @@ def print_header(header, expected_cksum=None):
     print('{}{:32} payload size: {}'.format(prefix, payload_size.hex(), psz))
     print('{}{:32} checksum {}'.format(prefix, cksum.hex(), verified))
     return command
+
+
+def main(block_number=BLOCK_NUMBER):
+    if len(sys.argv) == 2:
+        try:
+            block_number = int(sys.argv[1])
+        except ValueError:
+            print('Usage: lab5.py BLOCK_NUMBER')
+            print("Error: BLOCK_NUMBER must be an integer.")
+            exit(1)
+
+    with BTC_SOCKET:
+        # Establish connection with Bitcoin node
+        BTC_SOCKET.connect(BTC_PEER_ADDRESS)
+
+        # Send version message and receive version/verack
+        version_bytes = construct_message('version', version_message())
+        peer_vsn_bytes = exchange_messages(version_bytes, expected_bytes=126)[0]
+        peer_height = peer_height_from_version(peer_vsn_bytes)
+
+        # Send verack message
+        verack_bytes = construct_message('verack', EMPTY_STRING)
+        exchange_messages(verack_bytes, expected_bytes=202)
+
+        # Send ping and receive pong
+        ping_bytes = construct_message('ping', ping_message())
+        exchange_messages(ping_bytes, expected_bytes=32)
+
+        # Check if the requested block number is within the peer's blockchain height
+        if block_number > peer_height:
+            print('\nCould not retrieve block {}: max height is {}'.format(block_number, peer_height))
+            exit(1)
+
+        # Initialize block hash and current height
+        block_hash = swap_endian(GENESIS_BLOCK)
+        current_height = 0
+
+        last_500_blocks = []    # Store the last 500 blocks
+
+        # Retrieve blocks until the requested block is found
+        while current_height < block_number:
+            last_500_blocks, current_height = send_getblocks_message(block_hash, current_height)
+            block_hash = last_500_blocks[-1]
+
+        # Retrieve the specific block data
+        my_block_hash = last_500_blocks[(block_number - 1) % 500]
+        getdata_bytes = construct_message('getdata', getdata_message(2, my_block_hash))
+        msg_list = exchange_messages(getdata_bytes, height=block_number, wait=True)
+        my_block = b''.join(msg_list)
+
+        # Perform block manipulation experiment
+        manipulate_transaction(my_block, block_number, last_500_blocks, 100)
