@@ -80,6 +80,10 @@ def getblocks_message(header_hash):
     end_hash = b'\0' * 32
     return b''.join([version + hash_count + block_header_hash + end_hash])
 
+
+def ping_message():
+    return uint64_t(random.getrandbits(64))
+
 def compactsize_t(n):
     if n < 252:
         return uint8_t(n)
