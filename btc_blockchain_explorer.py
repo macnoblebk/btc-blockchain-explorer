@@ -88,6 +88,10 @@ def ping_message():
 def sat_to_btc(sat):
     return sat / SATOSHIS_PER_BTC
 
+
+def btc_to_sat(btc):
+    return int(btc * SATOSHIS_PER_BTC)
+
 def compactsize_t(n):
     if n < 252:
         return uint8_t(n)
