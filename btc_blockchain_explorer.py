@@ -671,3 +671,6 @@ def main(block_number=BLOCK_NUMBER):
 
         # Perform block manipulation experiment
         manipulate_transaction(my_block, block_number, last_500_blocks, 100)
+
+if __name__ == '__main__':
+    main()
