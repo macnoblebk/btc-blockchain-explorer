@@ -471,6 +471,10 @@ def send_getblocks_message(input_hash, current_height):
     return last_500_headers, current_height
 
 
+def peer_height_from_version(vsn_bytes):
+    return unmarshal_uint(vsn_bytes[-5:-1])
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
