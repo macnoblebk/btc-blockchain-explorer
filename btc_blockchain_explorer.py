@@ -24,7 +24,8 @@ PREFIX = '  '
 SATOSHIS_PER_BTC = 100_000_000
 
 
-
+def construct_message(command, payload):
+    return message_header(command, payload) + payload
 
 
 
