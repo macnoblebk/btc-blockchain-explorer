@@ -268,6 +268,14 @@ def print_ping_pong_message(nonce):
     prefix = PREFIX * 2
     print('{}{:32} nonce: {}'.format(prefix, nonce.hex(), unmarshal_uint(nonce)))
 
+
+def print_sendcmpct_message(payload):
+    announce, version = payload[:1], payload[1:]
+    prefix = PREFIX * 2
+    print('{}{:32} announce: {}'.format(prefix, announce.hex(), bytes(announce) != b'\0'))
+    print('{}{:32} version: {}'.format(prefix, version.hex(), unmarshal_uint(version)))
+
+
 def print_version_msg(b):
     """
     Report the contents of the given bitcoin version message (sans the header)
