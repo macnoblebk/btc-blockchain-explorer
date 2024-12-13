@@ -1,0 +1,429 @@
+
+send MESSAGE
+(110) f9beb4d976657273696f6e0000000000560000002824a8d67f110100000000000000000015795b670000000001000000000000000000000000000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    76657273696f6e0000000000         command: version
+    56000000                         payload size: 86
+    2824a8d6                         checksum (verified)
+  VERSION 
+  --------------------------------------------------------
+
+****** Received 150 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(126) f9beb4d976657273696f6e0000000000660000003a407c1a80110100090400000000000015795b670000000000000000000000000000000000000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    76657273696f6e0000000000         command: version
+    66000000                         payload size: 102
+    3a407c1a                         checksum (verified)
+  VERSION 
+  --------------------------------------------------------
+
+receive MESSAGE
+(24) f9beb4d976657261636b000000000000000000005df6e0e2
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    76657261636b000000000000         command: verack
+    00000000                         payload size: 0
+    5df6e0e2                         checksum (verified)
+
+send MESSAGE
+(24) f9beb4d976657261636b000000000000000000005df6e0e2
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    76657261636b000000000000         command: verack
+    00000000                         payload size: 0
+    5df6e0e2                         checksum (verified)
+
+No bytes left to receive from ('3.65.33.103', 8333): timed out
+
+****** Received 97 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(33) f9beb4d973656e64636d70637400000009000000e92f5ef8000200000000000000
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    73656e64636d706374000000         command: sendcmpct
+    09000000                         payload size: 9
+    e92f5ef8                         checksum (verified)
+  SENDCMPCT 
+  --------------------------------------------------------
+
+receive MESSAGE
+(32) f9beb4d970696e670000000000000000080000003a70db0284a3c1dfc27b7e60
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    70696e670000000000000000         command: ping
+    08000000                         payload size: 8
+    3a70db02                         checksum (verified)
+  PING 
+  --------------------------------------------------------
+
+receive MESSAGE
+(32) f9beb4d966656566696c74657200000008000000e80fd19fe803000000000000
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    66656566696c746572000000         command: feefilter
+    08000000                         payload size: 8
+    e80fd19f                         checksum (verified)
+  FEEFILTER 
+  --------------------------------------------------------
+
+send MESSAGE
+(32) f9beb4d970696e67000000000000000008000000afeb027b87f84ec521ad0feb
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    70696e670000000000000000         command: ping
+    08000000                         payload size: 8
+    afeb027b                         checksum (verified)
+  PING 
+  --------------------------------------------------------
+
+****** Received 32 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(32) f9beb4d9706f6e67000000000000000008000000afeb027b87f84ec521ad0feb
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    706f6e670000000000000000         command: pong
+    08000000                         payload size: 8
+    afeb027b                         checksum (verified)
+  PONG 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b730000004500000084f4958d7f110100016fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d61900000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    84f4958d                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e760000000000000000005346000025173c57fdf401020000004860eb18bf1b1620e37e9490fc8a427514416fd75159ab86688e9a8300...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    25173c57                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b73000000450000009a18467b7f11010001db773c8f3b90efa51d8e40291406897062c164dff617d2a7bf64f64f000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    9a18467b                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e76000000000000000000534600009dbeb159fdf40102000000f9980503946685d96c93e577fbc9178bf36afda513d16ca79272884600...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    9dbeb159                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b73000000450000007221488c7f1101000109edf646d13d2a7e1da8bdad14d249b037eccd8af23aa704379837c9000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    7221488c                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e7600000000000000000053460000e58d51fdfdf40102000000c6b465b2edf2fb5a720f34deb9236bc24b7e2e379e85dbf8447388a200...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    e58d51fd                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b730000004500000072fa5b837f110100011340bd94b5153ba7e5e9b692b59573843e476cd9b97b5b951a68077d000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    72fa5b83                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e760000000000000000005346000011bbf0f9fdf4010200000037866e14a43d83031550147cd771e7d8074999b6270074c47ed3f75400...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    11bbf0f9                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b7300000045000000dadb74257f110100011a95da875f907fb31f13cb3e93e38f01630af6b8b461859d5cd6d5df000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    dadb7425                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e76000000000000000000534600006c83aa58fdf40102000000c0b77cb010de866789896e327d6043a92dda7cd6ba5490c4467a216700...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    6c83aa58                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b7300000045000000530cf4dc7f11010001166b116776ce47761955d195d48448a463edb216d991169f552447d8000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    530cf4dc                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e76000000000000000000534600005a7e3246fdf40102000000c5987a2ec58891152d22d7cf9bde239b2385e7c29f84948904021af100...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    5a7e3246                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b730000004500000044f44a077f11010001ceecc5a15008989f2fe781116dc152a4b0ec969964119b46aab9814a000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    44f44a07                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e760000000000000000005346000059d721d2fdf4010200000045886d600cd3ca7b5449ce79a343ee208abcd469c9718bd2986b1dee00...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    59d721d2                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b73000000450000000305aa787f110100014ba482aef3cfaf495953b7f524c8cafc3a58f68bf487253b5a9cd422000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    0305aa78                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e7600000000000000000053460000fc5cc586fdf4010200000094838e15d39a5fb4466361809ef1afcccaac32539df1d1060dfd087f00...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    fc5cc586                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b7300000045000000340bc8057f1101000142a89266152f35a950df49fd6160f0495f55a35043474ae8a92a2e92000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    340bc805                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e7600000000000000000053460000f683caabfdf4010200000006dc5816738cbeec48fa5196ad117a6bd1fd2366b4c606dee8686fa800...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    f683caab                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(93) f9beb4d9676574626c6f636b73000000450000008c0b62397f1101000118f7dc213d60bae2ea107b747adc54970e4fae8bf048428e94645a01000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574626c6f636b73000000         command: getblocks
+    45000000                         payload size: 69
+    8c0b6239                         checksum (verified)
+  GETBLOCKS 
+  --------------------------------------------------------
+
+****** Received 18027 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(18027) f9beb4d9696e7600000000000000000053460000a979058efdf40102000000b497fba78cd0ec06bee8cb754660c7cfb76739db426d36a1c413aedb00...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    696e76000000000000000000         command: inv
+    53460000                         payload size: 18003
+    a979058e                         checksum (verified)
+  INV 
+  --------------------------------------------------------
+
+send MESSAGE
+(61) f9beb4d967657464617461000000000025000000808e822b0102000000a0ffe355f2404df3f5cef54879b9f17f9a74dce8defcd902a0ec112a000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574646174610000000000         command: getdata
+    25000000                         payload size: 37
+    808e822b                         checksum (verified)
+  GETDATA 
+  --------------------------------------------------------
+
+No bytes left to receive from ('3.65.33.103', 8333): timed out
+
+****** Received 239 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(239) f9beb4d9626c6f636b00000000000000d7000000cb1a432501000000cfdcf012411c14634abcc9e1e6cbb235e81f6962d358a55453b4adf500000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    626c6f636b00000000000000         command: block
+    d7000000                         payload size: 215
+    cb1a4325                         checksum (verified)
+  BLOCK 000000002a11eca002d9fcdee8dc749a7ff1b97948f5cef5f34d40f255e3ffa0
+  --------------------------------------------------------
+
+Manipulating existing transaction
+****************************************************************
+
+Block 4567: change value from 50.0 BTC to 100.0 BTC
+-----------------------------------------
+old value:              50.0 BTC = 5000000000 satoshis
+old merkle hash:        d63d385774be95adb040d93f697d1e691df86c5f69a8bdbff20fcb63d3f0205c
+verify old merkle hash: hash(txn) = d63d385774be95adb040d93f697d1e691df86c5f69a8bdbff20fcb63d3f0205c
+old block hash:         000000002a11eca002d9fcdee8dc749a7ff1b97948f5cef5f34d40f255e3ffa0
+****************
+new value:              100.0 BTC = 10000000000 satoshis
+new merkle:             8cad0c2ea4b73c5d452da533d3a004b39f2415c35d8c2c6e5f7b77df01af6d05
+verify new merkle:      hash(txn) = 8cad0c2ea4b73c5d452da533d3a004b39f2415c35d8c2c6e5f7b77df01af6d05
+new block hash:         5137d0b58f5faf36cd3b357cbf53497a80382ecd908dedd559b74958043d6bd5
+--------------------------------
+
+*********** Testing (value has changed) ***********  MESSAGE
+(239) f9beb4d9626c6f636b00000000000000d70000004ae0ebeb01000000cfdcf012411c14634abcc9e1e6cbb235e81f6962d358a55453b4adf500000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    626c6f636b00000000000000         command: block
+    d7000000                         payload size: 215
+    4ae0ebeb                         checksum (verified)
+  BLOCK 5137d0b58f5faf36cd3b357cbf53497a80382ecd908dedd559b74958043d6bd5
+  --------------------------------------------------------
+
+Block 4568 data: 
+
+send MESSAGE
+(61) f9beb4d967657464617461000000000025000000f80ba20e0102000000cd562438188f44c16bc4dcfb577b7fb41b1b39043e76a298f5c88e77000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    676574646174610000000000         command: getdata
+    25000000                         payload size: 37
+    f80ba20e                         checksum (verified)
+  GETDATA 
+  --------------------------------------------------------
+
+No bytes left to receive from ('3.65.33.103', 8333): timed out
+
+****** Received 240 bytes from BTC node ('3.65.33.103', 8333) ******
+
+receive MESSAGE
+(240) f9beb4d9626c6f636b00000000000000d800000007a9d6e601000000a0ffe355f2404df3f5cef54879b9f17f9a74dce8defcd902a0ec112a00000000...
+  HEADER
+  --------------------------------------------------------
+    f9beb4d9                         magic
+    626c6f636b00000000000000         command: block
+    d8000000                         payload size: 216
+    07a9d6e6                         checksum (verified)
+  BLOCK 00000000778ec8f598a2763e04391b1bb47f7b57fbdcc46bc1448f18382456cd
+  --------------------------------------------------------
+
+Block 4568 previous block hash : 000000002a11eca002d9fcdee8dc749a7ff1b97948f5cef5f34d40f255e3ffa0
+Block 4567 modified block hash : 5137d0b58f5faf36cd3b357cbf53497a80382ecd908dedd559b74958043d6bd5
+	000000002a11eca002d9fcdee8dc749a7ff1b97948f5cef5f34d40f255e3ffa0 != 5137d0b58f5faf36cd3b357cbf53497a80382ecd908dedd559b74958043d6bd5
+Modified block rejected!
