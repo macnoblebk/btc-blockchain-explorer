@@ -1,4 +1,4 @@
-# Bitcoin Blockchain Explorer
+# Bitcoin Protocol Interaction Tool
 A Python-based project to interact with the Bitcoin P2P network, retrieve and manipulate blockchain data, and demonstrate how modifications to a block would be detected and rejected by the network.
 
 ## Overview
