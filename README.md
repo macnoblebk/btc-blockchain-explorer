@@ -17,10 +17,15 @@ This project connects to a Bitcoin node, retrieves a specific block based on a u
 ![Screenshot 2024-12-12 at 22.04.38.png](Screenshot%202024-12-12%20at%2022.04.38.png)
 ![Screenshot 2024-12-12 at 22.04.59.png](Screenshot%202024-12-12%20at%2022.04.59.png)
 
+
+## Usage
+1. Run the script with an optional block number:
+   ```bash
+   python3 btc_blockchain_explorer.py <BLOCK_NUMBER>
+
 ## Setup
 1. To get a list of bitcoin nodes:
    ```bash
    curl https://bitcoin.sipa.be/seeds.txt.gz | gzip -dc > seeds_main.txt
    curl https://bitcoin.sipa.be/asmap-filled.dat > asmap-filled.dat
    python3 makeseeds.py -a asmap-filled.dat -s seeds_main.txt > nodes_main.txt
-
