@@ -1,3 +1,24 @@
+"""
+CPSC 5520, Seattle University
+This is free and unencumbered software released into the public domain.
+:Author: Mac-Noble Brako-Kusi
+:Version: 1.0
+:File: btc_blockchain_explorer.py
+:Date: 12-07-2024
+
+This script implements low-level Bitcoin protocol operations to interact with
+Bitcoin nodes. It establishes communication, retrieves blockchain data,
+parses and constructs protocol messages, and performs detailed analysis of
+blocks and transactions. The script also includes experimental features to
+demonstrate blockchain integrity and security.
+
+- Establishes TCP connections to Bitcoin nodes.
+- Sends and receives Bitcoin protocol messages (e.g., version, getblocks, ping).
+- Retrieves and parses block data, transaction inputs/outputs, and metadata.
+- Simulates blockchain tampering to highlight Bitcoin's security mechanisms.
+- Supports Bitcoin compact size integer encoding and endian format conversions.
+"""
+
 import hashlib
 import random
 import time
@@ -25,10 +46,30 @@ SATOSHIS_PER_BTC = 100_000_000
 
 
 def construct_message(command, payload):
+    """
+    Constructs a Bitcoin protocol message by combining the header and payload.
+
+    Args:
+        command (str): The command name for the message (e.g., 'version', 'ping').
+        payload (bytes): The payload for the message.
+
+    Returns:
+           bytes: The complete Bitcoin protocol message.
+    """
     return message_header(command, payload) + payload
 
 
 def message_header(command, payload):
+    """
+    Creates a Bitcoin message header.
+
+    Args:
+        command (str): The command name for the message (e.g., 'version', 'ping').
+        payload (bytes): The payload for the message.
+
+    Returns:
+          bytes: The 24-byte Bitcoin message header.
+    """
     magic = START_STRING
     command_name = command.encode('ascii')
     while len(command_name) < COMMAND_SIZE:
@@ -39,14 +80,41 @@ def message_header(command, payload):
 
 
 def checksum(payload: bytes):
+    """
+    Computes the checksum for a Bitcoin message payload.
+
+    Args:
+        payload (bytes): The payload for which the checksum is computed.
+
+    Returns:
+        bytes: The first 4 bytes of the double SHA-256 hash of the payload.
+    """
     return hash(payload)[:4]
 
 
 def hash(payload: bytes):
+    """
+    Computes the double SHA-256 hash of the given payload.
+
+    Args:
+        payload (bytes): The data to be hashed.
+
+    Returns:
+        bytes: The double SHA-256 hash of the payload.
+    """
     return hashlib.sha256(hashlib.sha256(payload).digest()).digest()
 
 
 def version_message():
+    """
+    Constructs the payload for a Bitcoin 'version' message.
+
+    The 'version' message is used to establish communication between peers
+    and exchange information such as protocol version and node capabilities.
+
+    Returns:
+        bytes: The payload for the 'version' message.
+    """
     version = int32_t(VERSION)
     services = uint64_t(0)
     timestamp = uint64_t(int(time.time()))
@@ -67,6 +135,24 @@ def version_message():
 
 
 def getdata_message(tx_type, header_hash):
+    """
+    Constructs the payload for a Bitcoin 'getdata' message.
+
+    The 'getdata' message is used to request specific data from a peer node,
+    such as blocks or transactions.
+
+    Args:
+        tx_type (int): The type of data being requested:
+            - 1 for transaction data
+            - 2 for block data
+        header_hash (bytes): The hash of the block or transaction being requested.
+
+    Returns:
+        bytes: The payload of the 'getdata' message, consisting of:
+            - A compact size integer indicating the number of entries (usually 1).
+            - A 32-bit unsigned integer indicating the type of data requested.
+            - The 32-byte hash of the requested data.
+    """
     count = compactsize_t(1)
     entry_type = uint32_t(tx_type)
     entry_hash = bytes.fromhex(header_hash.hex())
@@ -74,6 +160,24 @@ def getdata_message(tx_type, header_hash):
 
 
 def getblocks_message(header_hash):
+    """
+    Constructs the payload for a Bitcoin 'getblocks' message.
+
+    The 'getblocks' message is used to request block header hashes starting
+    from a specific block hash. The response provides a list of hashes, which
+    can then be used to request full block data.
+
+    Args:
+        header_hash (bytes): The hash of the starting block for which subsequent
+                             block header hashes are requested.
+
+    Returns:
+        bytes: The payload of the 'getblocks' message, consisting of:
+            - The protocol version as a 32-bit unsigned integer.
+            - A compact size integer indicating the number of starting block hashes (usually 1).
+            - The 32-byte hash of the starting block.
+            - A 32-byte "stop hash" set to all zeroes, indicating no specific stopping point.
+    """
     version = uint32_t(VERSION)
     hash_count = compactsize_t(1)
     block_header_hash = bytes.fromhex(header_hash.hex())
@@ -82,17 +186,50 @@ def getblocks_message(header_hash):
 
 
 def ping_message():
+    """
+    Constructs the payload for a Bitcoin 'ping' message.
+
+    Returns:
+        bytes: The payload for the 'ping' message, containing a random nonce.
+    """
     return uint64_t(random.getrandbits(64))
 
 
 def sat_to_btc(sat):
+    """
+    Converts satoshis to BTC.
+
+    Args:
+        sat (int): Amount in satoshis.
+
+    Returns:
+        float: Equivalent amount in BTC.
+    """
     return sat / SATOSHIS_PER_BTC
 
 
 def btc_to_sat(btc):
+    """
+    Converts BTC to satoshis.
+
+    Args:
+        btc (float): Amount in BTC.
+
+    Returns:
+        int: Equivalent amount in satoshis.
+    """
     return int(btc * SATOSHIS_PER_BTC)
 
 def compactsize_t(n):
+    """
+    Encode an integer using Bitcoin's compact size encoding.
+
+    Args:
+        n (int): The integer to encode.
+
+    Returns:
+        bytes: The compact size encoded representation of the integer.
+    """
     if n < 252:
         return uint8_t(n)
     if n < 0xffff:
@@ -103,6 +240,15 @@ def compactsize_t(n):
 
 
 def unmarshal_compactsize(b):
+    """
+    Convert a boolean flag to its Bitcoin protocol representation.
+
+    Args:
+        flag (bool): The boolean flag.
+
+    Returns:
+        bytes: A single byte representing the boolean (1 for True, 0 for False).
+    """
     key = b[0]
     if key == 0xff:
         return b[0:9], unmarshal_uint(b[1:9])
@@ -114,51 +260,158 @@ def unmarshal_compactsize(b):
 
 
 def bool_t(flag):
+    """
+    Convert a boolean flag to its Bitcoin protocol representation.
+
+    Args:
+        flag (bool): The boolean flag.
+
+    Returns:
+        bytes: A single byte representing the boolean (1 for True, 0 for False).
+    """
     return uint8_t(1 if flag else 0)
 
 
 def ipv6_from_ipv4(ipv4_str):
+    """
+    Convert an IPv4 address to an IPv6-mapped address.
+
+    Args:
+        ipv4 (str): The IPv4 address as a string.
+
+    Returns:
+        bytes: The IPv6-mapped representation of the IPv4 address.
+    """
     pchIPv4 = bytearray([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff])
     return pchIPv4 + bytearray((int(x) for x in ipv4_str.split('.')))
 
 
 def ipv6_to_ipv4(ipv6):
+    """
+    Convert an IPv6-mapped address back to an IPv4 address.
+
+    Args:
+        ipv6 (bytes): A 16-byte IPv6 address.
+
+    Returns:
+        str: The IPv4 address as a string.
+    """
     return '.'.join([str(b) for b in ipv6[12:]])
 
 
 def uint8_t(n):
+    """
+    Convert an integer to a little-endian unsigned 8-bit representation.
+
+    Args:
+        n (int): The integer to convert.
+
+    Returns:
+        bytes: The 8-bit unsigned integer as bytes.
+    """
     return int(n).to_bytes(1, byteorder='little', signed=False)
 
 
 def uint16_t(n, byteorder='little'):
+    """
+       Convert an integer to a little-endian unsigned 16-bit representation.
+
+       Args:
+           n (int): The integer to convert.
+           byteorder (str): The byte order ('little' or 'big').
+
+       Returns:
+           bytes: 16-bit unsigned integer as bytes.
+       """
     return int(n).to_bytes(2, byteorder=byteorder, signed=False)
 
 
 def int32_t(n):
+    """
+    Convert an integer to a little-endian signed 32-bit representation.
+
+    Args:
+        n (int): The integer to convert.
+
+    Returns:
+        bytes: 32-bit signed integer as bytes.
+    """
     return int(n).to_bytes(4, byteorder='little', signed=True)
 
 
 def uint32_t(n):
+    """
+     Convert an integer to a little-endian unsigned 32-bit representation.
+
+     Args:
+         n (int): The integer to convert.
+
+     Returns:
+         bytes: 32-bit unsigned integer as bytes.
+     """
     return int(n).to_bytes(4, byteorder='little', signed=False)
 
 
 def int64_t(n):
+    """
+    Convert an integer to a little-endian signed 64-bit representation.
+
+    Args:
+        n (int): The integer to convert.
+
+    Returns:
+        bytes: 64-bit signed integer as bytes.
+    """
     return int(n).to_bytes(8, byteorder='little', signed=True)
 
 
 def uint64_t(n):
+    """
+    Convert an integer to a little-endian unsigned 64-bit representation.
+
+    Args:
+        n (int): The integer to convert.
+
+    Returns:
+        bytes: 64-bit unsigned integer as bytes.
+    """
     return int(n).to_bytes(8, byteorder='little', signed=False)
 
 
 def unmarshal_int(b):
+    """
+    Convert a little-endian byte array to a signed integer.
+
+    Args:
+        b (bytes): Byte array representing the integer.
+
+    Returns:
+        int: The integer value.
+    """
     return int.from_bytes(b, byteorder='little', signed=True)
 
 
 def unmarshal_uint(b, byteorder='little'):
+    """
+    Convert bytes to an unsigned integer.
+
+    Args:
+        b (bytes): Byte representation of the integer.
+        byteorder (str): The byte order ('little' or 'big').
+
+    Returns:
+        int: The integer value.
+    """
     return int.from_bytes(b, byteorder=byteorder, signed=False)
 
 
 def swap_endian(b: bytes):
+    """
+    Swap the endianness of the given bytes. If little, swaps to big. If big,
+    swaps to little.
+    :param b: bytes to swap
+    :return: swapped bytes
+    """
     swapped = bytearray.fromhex(b.hex())
     swapped.reverse()
     return swapped
@@ -206,6 +459,16 @@ def print_message(msg, text=None, height=None):
 
 
 def print_inv_message(payload, height):
+    """
+    Parses and prints the inventory message payload.
+
+    Args:
+        payload (bytes): The inventory message payload.
+        height (int, optional): The starting block height for the inventory.
+
+    Returns:
+        None
+    """
     count_bytes, count = unmarshal_compactsize(payload)
     i = len(count_bytes)
     inventory = []
@@ -224,6 +487,15 @@ def print_inv_message(payload, height):
 
 
 def print_getblocks_message(payload):
+    """
+    Parses and prints the 'getblocks' message payload.
+
+    Args:
+        payload (bytes): The 'getblocks' message payload.
+
+    Returns:
+        None
+    """
     version = payload[:4]
     hash_count_bytes, hash_count = unmarshal_compactsize(payload[4:])
     i = 4 + len(hash_count_bytes)
@@ -246,11 +518,29 @@ def print_getblocks_message(payload):
 
 
 def print_feefilter_message(feerate):
+    """
+    Prints the details of a 'feefilter' message.
+
+    Args:
+        feerate (bytes): The feerate payload from the 'feefilter' message.
+
+    Returns:
+        None
+    """
     prefix = PREFIX * 2
     print('{}{:32} count: {}'.format(prefix, feerate.hex(), unmarshal_uint(feerate)))
 
 
 def print_addr_message(payload):
+    """
+    Parses and prints the details of an 'addr' message payload.
+
+    Args:
+        payload (bytes): The 'addr' message payload.
+
+    Returns:
+        None
+    """
     ip_count_bytes, ip_addr_count = unmarshal_compactsize(payload)
     i = len(ip_count_bytes)
     epoch_time, services, ip_addr, port = (payload[i: i + 4], payload[i+4: i+12],
@@ -265,11 +555,29 @@ def print_addr_message(payload):
 
 
 def print_ping_pong_message(nonce):
+    """
+    Prints the details of a 'ping' or 'pong' message.
+
+    Args:
+        nonce (bytes): The nonce from the 'ping' or 'pong' message.
+
+    Returns:
+        None
+    """
     prefix = PREFIX * 2
     print('{}{:32} nonce: {}'.format(prefix, nonce.hex(), unmarshal_uint(nonce)))
 
 
 def print_sendcmpct_message(payload):
+    """
+    Parses and prints the 'sendcmpct' message payload.
+
+    Args:
+        payload (bytes): The 'sendcmpct' message payload.
+
+    Returns:
+        None
+    """
     announce, version = payload[:1], payload[1:]
     prefix = PREFIX * 2
     print('{}{:32} announce: {}'.format(prefix, announce.hex(), bytes(announce) != b'\0'))
@@ -277,6 +585,15 @@ def print_sendcmpct_message(payload):
 
 
 def print_block_message(payload):
+    """
+    Parses and prints the details of a block message payload.
+
+    Args:
+        payload (bytes): The block message payload.
+
+    Returns:
+        None
+    """
     version, previous_block, merkle_root, epoch_time, bits, nonce = (payload[:4], payload[4:36],
                                                                      payload[36:68], payload[68:72],
                                                                      payload[72:76], payload[76:80])
@@ -302,6 +619,15 @@ def print_block_message(payload):
 
 
 def print_transaction(txn_bytes):
+    """
+    Parses and prints the details of a transaction within a block.
+
+    Args:
+        txn_bytes (bytes): The transaction data in bytes.
+
+    Returns:
+        None
+    """
     version = txn_bytes[:4]
     tx_in_count_bytes, tx_in_count = unmarshal_compactsize(txn_bytes[4:])
     i = 4 + len(tx_in_count_bytes)
@@ -345,6 +671,15 @@ def print_transaction(txn_bytes):
 
 
 def print_transaction_inputs(tx_in_list):
+    """
+    Prints the inputs of a transaction.
+
+    Args:
+        tx_in_list (list): List of transaction input details.
+
+    Returns:
+        None
+    """
     prefix = PREFIX * 2
     for i, tx_in in enumerate(tx_in_list, start=1):
         print('\n{} Transaction {}{}:'.format(prefix, i, ' (Coinbase)' if i == 1 else ''))
@@ -359,6 +694,15 @@ def print_transaction_inputs(tx_in_list):
 
 
 def print_transaction_outputs(tx_out_list):
+    """
+    Prints the outputs of a transaction.
+
+    Args:
+        tx_out_list (list): List of transaction output details.
+
+    Returns:
+        None
+    """
     prefix = PREFIX * 2
     for i, tx_out in enumerate(tx_out_list, start=1):
         print('\n{} Transaction {}:'.format(prefix, i))
@@ -377,6 +721,16 @@ def print_transaction_outputs(tx_out_list):
 
 
 def parse_coinbase(cb_bytes, version):
+    """
+    Parses a coinbase transaction.
+
+    Args:
+        cb_bytes (bytes): The coinbase transaction data.
+        version (bytes): The transaction version.
+
+    Returns:
+        tuple: Parsed coinbase transaction details and script byte count.
+    """
     hash_null = cb_bytes[:32]
     index = cb_bytes[32:36]
     script_bytes, script_bytes_count = unmarshal_compactsize(cb_bytes[36:])
@@ -397,6 +751,15 @@ def parse_coinbase(cb_bytes, version):
 
 
 def parse_tx_out(tx_out_bytes):
+    """
+    Parses a transaction output.
+
+    Args:
+        tx_out_bytes (bytes): The transaction output data.
+
+    Returns:
+        tuple: Parsed transaction output details and public key script byte count.
+    """
     value = tx_out_bytes[:8]
     pk_script_bytes, pk_script_bytes_count = unmarshal_compactsize(tx_out_bytes[8:])
     i = 8 + len(pk_script_bytes)
@@ -405,6 +768,15 @@ def parse_tx_out(tx_out_bytes):
 
 
 def parse_tx_in(tx_in_bytes):
+    """
+    Parses a transaction input.
+
+    Args:
+        tx_in_bytes (bytes): The transaction input data.
+
+    Returns:
+        tuple: Parsed transaction input details and script byte count.
+    """
     hash = tx_in_bytes[:32]
     index = tx_in_bytes[32:36]
     script_bytes, script_bytes_count = unmarshal_compactsize(tx_in_bytes[36:])
@@ -415,6 +787,15 @@ def parse_tx_in(tx_in_bytes):
 
 
 def split_message(peer_msg_bytes):
+    """
+     Splits a peer message stream into individual Bitcoin protocol messages.
+
+     Args:
+         peer_msg_bytes (bytes): The stream of peer message bytes.
+
+     Returns:
+         list: List of individual Bitcoin protocol messages.
+     """
     msg_list = []
     while peer_msg_bytes:
         payload_size = unmarshal_uint(peer_msg_bytes[16:20])
@@ -425,10 +806,29 @@ def split_message(peer_msg_bytes):
 
 
 def get_last_block_hash(inv_bytes):
+    """
+    Retrieves the last block hash from an inventory message.
+
+    Args:
+        inv_bytes (bytes): The inventory message bytes.
+
+    Returns:
+        bytes: The last block hash.
+    """
     return inv_bytes[len(inv_bytes) - 32:]
 
 
 def update_current_height(block_list, current_height):
+    """
+    Updates the current blockchain height based on received block headers.
+
+    Args:
+        block_list (list): List of block headers.
+        current_height (int): The current block height.
+
+    Returns:
+        int: The updated block height.
+    """
     header_size = 36
     offset = 27
     new_blocks = (len(block_list[-1]) - offset) // header_size
@@ -436,6 +836,18 @@ def update_current_height(block_list, current_height):
 
 
 def exchange_messages(bytes_to_send, expected_bytes=None, height=None, wait=False):
+    """
+    Sends and receives Bitcoin protocol messages with a peer node.
+
+    Args:
+        bytes_to_send (bytes): The message to send.
+        expected_bytes (int, optional): Number of bytes expected in the response.
+        height (int, optional): The block height associated with the message.
+        wait (bool, optional): Whether to wait indefinitely for a response.
+
+    Returns:
+        list: List of received messages from the peer.
+    """
     print_message(bytes_to_send, 'send', height=height)
     BTC_SOCKET.settimeout(0.5)
     bytes_received = b''
@@ -463,6 +875,16 @@ def exchange_messages(bytes_to_send, expected_bytes=None, height=None, wait=Fals
 
 
 def send_getblocks_message(input_hash, current_height):
+    """
+    Sends a 'getblocks' message and processes the response inventory.
+
+    Args:
+        input_hash (bytes): The starting block hash.
+        current_height (int): The current block height.
+
+    Returns:
+        tuple: A list of last 500 block headers and the updated block height.
+    """
     getblocks_bytes = construct_message('getblocks', getblocks_message(input_hash))
     peer_inv = exchange_messages(getblocks_bytes, expected_bytes=18027, height=current_height + 1)
     peer_inv_bytes = b''.join(peer_inv)
@@ -472,10 +894,30 @@ def send_getblocks_message(input_hash, current_height):
 
 
 def peer_height_from_version(vsn_bytes):
+    """
+    Extracts the peer's blockchain height from a version message.
+
+    Args:
+        vsn_bytes (bytes): The version message bytes.
+
+    Returns:
+        int: The peer's blockchain height.
+    """
     return unmarshal_uint(vsn_bytes[-5:-1])
 
 
 def change_block_value(block, block_number, new_amount):
+    """
+    Modifies the value of a transaction in a Bitcoin block.
+
+    Args:
+        block (bytes): The original Bitcoin block data.
+        block_number (int): The block number being modified.
+        new_amount (int): The new transaction value in satoshis.
+
+    Returns:
+        bytes: The modified block data.
+    """
     txn_count_bytes = unmarshal_compactsize(block[104:])[0]
     index = 104 + len(txn_count_bytes)
     version = block[index:index + 4]
@@ -527,6 +969,18 @@ def change_block_value(block, block_number, new_amount):
 
 
 def manipulate_transaction(my_block, block_number, last_500_blocks, new_value):
+    """
+    Simulates tampering with a Bitcoin block by modifying a transaction value.
+
+    Args:
+        my_block (bytes): The Bitcoin block to tamper with.
+        block_number (int): The block number of the block being tampered with.
+        last_500_blocks (list): A list of the last 500 block headers.
+        new_value (float): The new value for the transaction in BTC.
+
+    Returns:
+        None
+    """
     print('\nManipulating existing transaction')
     print('*' * 64 + '\n')
     btcs = new_value
@@ -556,8 +1010,26 @@ def manipulate_transaction(my_block, block_number, last_500_blocks, new_value):
 
 def print_version_msg(b):
     """
-    Report the contents of the given bitcoin version message (sans the header)
-    :param payload: version message contents
+    Parse and display the contents of a Bitcoin version message.
+
+    The version message is part of the Bitcoin protocol and contains
+    information about the communicating nodes, such as supported protocol
+    version, services, timestamps, and more.
+
+    Args:
+        b (bytes): The payload of a Bitcoin version message (excluding the header).
+
+    Prints:
+        A detailed breakdown of the version message fields:
+        - Protocol version
+        - Services provided by the node
+        - Timestamps
+        - Receiver and sender address/port
+        - Nonce
+        - User agent string
+        - Start height of the blockchain
+        - Relay flag
+        - Any additional bytes (if present).
     """
     # pull out fields
     version, my_services, epoch_time, your_services = b[:4], b[4:12], b[12:20], b[20:28]
@@ -596,10 +1068,26 @@ def print_version_msg(b):
 
 def print_header(header, expected_cksum=None):
     """
-    Report the contents of the given bitcoin message header
-    :param header: bitcoin message header (bytes or bytearray)
-    :param expected_cksum: the expected checksum for this version message, if known
-    :return: message type
+    Parse and display the contents of a Bitcoin message header.
+
+    The header is the fixed-size portion of a Bitcoin message and contains
+    essential information such as magic bytes, command type, payload size, and
+    checksum.
+
+    Args:
+        header (bytes or bytearray): The first 24 bytes of a Bitcoin message.
+        expected_cksum (bytes, optional): The expected checksum for the payload.
+            If provided, it is compared to the checksum in the header.
+
+    Returns:
+        str: The command name extracted from the header (e.g., 'version', 'verack').
+
+    Prints:
+        A detailed breakdown of the header fields:
+        - Magic bytes (used to identify Bitcoin messages)
+        - Command (message type)
+        - Payload size
+        - Checksum with verification status (if expected checksum is provided).
     """
     magic, command_hex, payload_size, cksum = header[:4], header[4:16], header[16:20], header[20:]
     command = str(bytearray([b for b in command_hex if b != 0]), encoding='utf-8')
@@ -622,6 +1110,14 @@ def print_header(header, expected_cksum=None):
 
 
 def main(block_number=BLOCK_NUMBER):
+    """
+    Entry point for the script. Connects to a Bitcoin node, retrieves blockchain data,
+    and performs block manipulation as an experiment.
+
+    Args:
+        block_number (int, optional): The block number to retrieve and manipulate.
+                                       Defaults to the value specified if not provided.
+    """
     if len(sys.argv) == 2:
         try:
             block_number = int(sys.argv[1])
